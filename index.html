@@ -1,0 +1,35 @@
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Pendrive Key Matching</title>
+</head>
+<body>
+  <h1>Pendrive Key Matching</h1>
+  <button id="select-files-btn" disabled>Select Files</button>
+
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    // Simulate pendrive insertion event
+    const pendriveKey = 'PENDRIVE_KEY'; // Replace with your pendrive key
+    ipcRenderer.send('pendrive-inserted', pendriveKey);
+
+    ipcRenderer.on('key-matched', () => {
+      const selectFilesBtn = document.getElementById('select-files-btn');
+      selectFilesBtn.disabled = false;
+      selectFilesBtn.addEventListener('click', () => {
+        ipcRenderer.send('open-files-dialog');
+      });
+    });
+
+    ipcRenderer.on('selected-files', (event, filePaths) => {
+      console.log('Selected Files:', filePaths);
+      // Perform operations with the selected files
+    });
+
+    ipcRenderer.on('key-mismatched', () => {
+      alert('Pendrive key does not match the laptop key.');
+    });
+  </script>
+</body>
+</html>
